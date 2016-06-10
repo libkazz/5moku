@@ -6,15 +6,17 @@ module Gomoku
 
   class Store
     attr_accessor :data
+    attr_reader :size_x, :size_y
+
+    def initialize(size_x: 19, size_y: 19)
+      @size_x = size_x
+      @size_y = size_y
+    end
 
     def put(color, x, y)
       raise 'already exist' if data[y][x]
 
       data[y][x] = color
-    end
-
-    def size
-      {x: data.first.size + 3, y: data.size + 3}
     end
 
     def check
@@ -29,25 +31,29 @@ module Gomoku
   end
 
   class Screen
+    SPACE  = 3
+    STONES = {siro: '@', kuro: 'o'}
+    MARKS  = {yoko: '-' * SPACE, tate: '|', kouten: '+'}
+
     def refresh(store)
-      x = store.size[:x]
-      y = store.size[:y]
+      x = store.size_x
+      y = store.size_y
       data = store.data
 
       print "    "
-      print Array.new(x).map.with_index {|_, i| sprintf('%2d', i) }.join('  ')
+      print Array.new(x).map.with_index {|_, i| sprintf('%2d', i) }.join(' ' * (SPACE - 1))
       print "\n"
       y.times do |ny|
         print "#{sprintf('%03d', ny)}: "
         print(Array.new(x).map.with_index do |_, i|
           row = data[ny]
           n = row ? data[ny][i] : nil
-          {siro: 'o', kuro: '@'}[n] || '+'
-        end.join('---'))
+          STONES[n] || MARKS[:kouten]
+        end.join(MARKS[:yoko]))
         print "\n"
 
         print "     "
-        print Array.new(x).map { '|' }.join('   ')
+        print Array.new(x).map { MARKS[:tate] }.join('   ')
         print "\n"
       end
     end
