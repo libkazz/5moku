@@ -1,29 +1,39 @@
 module Gomoku
   class Screen
     SPACE  = 3
-    STONES = {siro: '@', kuro: 'o'}
-    MARKS  = {yoko: '-' * SPACE, tate: '|', kouten: '+'}
+    STONES = { WHITE => '@', BLACK => 'o' }
+    MARKS  = { yoko: '-' * SPACE, tate: '|', kouten: '+' }
 
-    def refresh(store)
-      x = store.size_x
-      y = store.size_y
-      data = store.data
+    class << self
+      def render(data)
+        size_y = data.size
+        size_x = data.first.size
 
-      print "    "
-      print Array.new(x).map.with_index {|_, i| sprintf('%2d', i) }.join(' ' * (SPACE - 1))
-      print "\n"
-      y.times do |ny|
-        print "#{sprintf('%03d', ny)}: "
-        print(Array.new(x).map.with_index do |_, i|
-          row = data[ny]
-          n = row ? data[ny][i] : nil
-          STONES[n] || MARKS[:kouten]
-        end.join(MARKS[:yoko]))
-        print "\n"
+        render_header(size_x)
 
-        print "     "
-        print Array.new(x).map { MARKS[:tate] }.join('   ')
-        print "\n"
+        (0..size_y - 1).each do |y|
+          render_row(data[y], y + 1, size_y == y + 1)
+        end
+      end
+
+      def render_header(size_x)
+        splitter = ' ' * (SPACE - 1)
+
+        puts "    #{(1..size_x).map { |x_num| sprintf('%2d', x_num) }.join(splitter)}"
+      end
+
+      def render_row(row, y_num, last = false)
+        size_x = row.size
+        row_splitter = ' ' * SPACE
+
+        row_header = "#{sprintf('%03d', y_num)}: "
+        row_values = (1..size_x).map { |x| STONES[row[x]] || MARKS[:kouten] }
+        puts "#{row_header}#{row_values.join(MARKS[:yoko])}"
+        if last
+          puts
+        else
+          puts "     #{row_values.map { MARKS[:tate] }.join(row_splitter)}"
+        end
       end
     end
   end

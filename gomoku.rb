@@ -1,32 +1,36 @@
 require 'highline'
 require 'tapp'
-require './gomoku/interface'
-require './gomoku/store'
-require './gomoku/screen'
 
-module Gomoku; end
+module Gomoku
+  WHITE = :siro
+  BLACK = :kuro
+end
+
+require './gomoku/interface'
+require './gomoku/game'
+require './gomoku/data'
+require './gomoku/screen'
 
 if __FILE__ == $0
   include Gomoku
   h = Interface.new
   puts h.color("hello", :green)
 
-  store = Store.new
-  store.data = [
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-  ]
+  game = Game.new
+  game.data.override!([
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+    [nil,nil,nil,nil,nil,WHITE,BLACK,nil,nil,nil],
+  ])
 
-  store.put(:siro, 0, 0)
-  store.put(:kuro, 1, 3)
+  game.put!(WHITE, 0, 0)
+  game.put!(BLACK, 1, 3)
 
-  screen = Screen.new
-  screen.refresh(store)
+  game.render
 end
