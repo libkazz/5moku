@@ -1,4 +1,5 @@
 require 'highline'
+require 'tapp'
 
 module Gomoku
   class Interface < HighLine
