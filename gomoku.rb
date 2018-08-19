@@ -22,12 +22,44 @@ module Gomoku
 
     def check
       [:siro, :kuro].each do |color|
-        dupped = data.dup.map do |row|
+        dupped0 = data.dup.map do |row|
           row.map { |cell| cell == color }
         end
 
-        # TODO
+        dupped1 = dupped0.dup.map.with_index do |row, i|
+          i.times { row.unshift(nil) }
+        end
+
+        dupped2 = dupped0.dup.map.with_index do |row, i|
+          (size_y - i).times { row.unshift(nil) }
+        end
+
+        [dupped0, dupped1, dupped2].each do |table|
+          p _has_5_ren?(table)
+          #return [:win, color] if _has_5_ren?(table)
+        end
       end
+    end
+
+    def inspect
+      data.each do |row|
+        row.each do |cell|
+          print cell ? cell.to_s[0] : ' '
+        end
+        puts
+      end
+    end
+
+    private
+
+    def _has_5_ren?(table)
+      table.map { |r| r.map { |c| c ? 1 : 0 } }.join =~ /1{5}/ or \
+      table.transpose.map { |r| r.map { |n| n ? 1 : 0 } }.join == /1{5}/
+    rescue
+      p self
+      p table
+      p table.size
+      exit
     end
   end
 
@@ -71,10 +103,10 @@ if __FILE__ == $0
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
+    [nil,nil,nil,nil,nil,nil,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
-    [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
+    [nil,nil,nil,nil,nil,nil,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
     [nil,nil,nil,nil,nil,:siro,:kuro,nil,nil,nil],
   ]
@@ -82,6 +114,9 @@ if __FILE__ == $0
   store.put(:siro, 0, 0)
   store.put(:kuro, 1, 3)
 
-  screen = Screen.new
-  screen.refresh(store)
+  #screen = Screen.new
+  #screen.refresh(store)
+
+  p store.check
+  p store
 end
